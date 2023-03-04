@@ -23,14 +23,16 @@ window.addEventListener("load", function () {
       this.height = this.spriteHeight;
       this.spriteX;
       this.spriteY;
+      this.frameX = 0;
+      this.frameY = 5;
       this.image = document.getElementById("bull");
     }
 
     draw(context) {
       context.drawImage(
         this.image,
-        0,
-        0,
+        this.frameX * this.spriteWidth,
+        this.frameY * this.spriteHeight,
         this.spriteWidth,
         this.spriteHeight,
         this.spriteX,
@@ -57,6 +59,18 @@ window.addEventListener("load", function () {
       context.stroke();
     }
     update() {
+      //sprite animation
+      const angle = Math.atan2(this.dy, this.dx);
+      if (angle < -2.74 || angle > 2.74) this.frameY = 6;
+      else if (angle < -1.96) this.frameY = 7;
+      else if (angle < -1.17) this.frameY = 0;
+      else if (angle < -0.39) this.frameY = 1;
+      else if (angle < 0.39) this.frameY = 2;
+      else if (angle < 1.17) this.frameY = 3;
+      else if (angle < 1.96) this.frameY = 4;
+      else if (angle < 2.74) this.frameY = 5;
+
+      console.log(angle);
       this.dx = this.game.mouse.x - this.collisionX;
       this.dy = this.game.mouse.y - this.collisionY;
       const distance = Math.hypot(this.dy, this.dx);
