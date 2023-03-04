@@ -16,7 +16,7 @@ window.addEventListener("load", function () {
       this.speedY = 0;
       this.dx = 0;
       this.dy = 0;
-      this.speedModifier = 20;
+      this.speedModifier = 5;
     }
 
     draw(context) {
@@ -52,11 +52,17 @@ window.addEventListener("load", function () {
       this.collisionX += this.speedX * this.speedModifier;
       this.collisionY += this.speedY * this.speedModifier;
       //collisions with obstacles
-      this.game.obstacles.forEach(obstacle=>{
-        if(this.game.checkCollision(this,obstacle)){
-          console.log("coliision")
+      this.game.obstacles.forEach((obstacle) => {
+        // [(distance < sumOfRadio),distance,sumOfRadio,dx,dy]
+        let [collision, distance, sumOfRadio, dx, dy] =
+          this.game.checkCollision(this, obstacle);
+        if (collision) {
+          const unit_x = dx / distance;
+          const unit_y = dy / distance;
+          this.collisionX = obstacle.collisionX + (sumOfRadio + 1) * unit_x;
+          this.collisionY = obstacle.collisionY + (sumOfRadio + 1) * unit_y;
         }
-      })
+      });
     }
   }
   class Obstacle {
@@ -146,7 +152,7 @@ window.addEventListener("load", function () {
       const dy = a.collisionY - b.collisionY;
       const distance = Math.hypot(dy, dx);
       const sumOfRadio = a.collisionRadius + b.collisionRadius;
-      return distance < sumOfRadio;
+      return [distance < sumOfRadio, distance, sumOfRadio, dx, dy];
     }
     init() {
       let attempts = 0;
